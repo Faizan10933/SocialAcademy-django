@@ -1,9 +1,11 @@
 from os import name
+from pydoc_data.topics import topics
 from django import forms
 from django.forms.forms import Form
 from django.http.request import QueryDict
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.template import base
 from django.urls.conf import include
 from .models import Room, Topic, Message
 from .forms import RoomForm
@@ -100,6 +102,14 @@ def room(request, pk):
     context={'room': room, 'room_messages': room_messages, 'participants': participants}
 
     return render(request, 'base/room.html', context)
+
+def userProfile(request, pk):
+    user= User.objects.get(id=pk)
+    rooms = user.room_set.all()
+    rooms_messages= user.message_set.all()
+    topics = Topic.objects.all()
+    context={'user': user, 'rooms': rooms, 'room_messages': rooms_messages, 'topics': topics}
+    return render(request, 'base/profile.html', context)
 
 @login_required(login_url='/login')
 def createRoom(request):
